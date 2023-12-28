@@ -1,0 +1,52 @@
+[
+    {
+      "name": "Completar informe",
+      "description": "Finalizar el informe mensual de ventas",
+      "completed": true
+    },
+    {
+      "name": "Reunión de equipo",
+      "description": "Organizar la reunión semanal del equipo",
+      "completed": false
+    },
+    {
+      "name": "Preparar presentación",
+      "description": "Crear la presentación para el cliente",
+      "completed": false
+    },
+    {
+      "name": "Ejercicio matutino",
+      "description": "Realizar rutina de ejercicios",
+      "completed": true
+    },
+    {
+      "name": "Comprar víveres",
+      "description": "Hacer la lista de compras y adquirir los productos necesarios",
+      "completed": false
+    },
+    {
+      "name": "Leer libro",
+      "description": "Avanzar en la lectura del libro 'La sombra del viento'",
+      "completed": false
+    },
+    {
+      "name": "Terminar proyecto",
+      "description": "Finalizar el proyecto de desarrollo web",
+      "completed": true
+    },
+    {
+      "name": "Practicar piano",
+      "description": "Dedicar tiempo a practicar piano",
+      "completed": false
+    },
+    {
+      "name": "Enviar correo electrónico",
+      "description": "Enviar el correo a los clientes sobre el nuevo producto",
+      "completed": true
+    },
+    {
+      "name": "Planificar vacaciones",
+      "description": "Empezar a planificar las vacaciones de verano",
+      "completed": false
+    }
+  ]
