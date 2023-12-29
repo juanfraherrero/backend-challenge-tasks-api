@@ -5,6 +5,11 @@ const Task = require('../models/Task');
 const tasks = require('../database/dataToLoad.json');
 
 let tasksSaved;
+const userTesting = {
+  username: 'testing',
+  password: 'testing',
+};
+let token;
 describe('Pruebas del servicio de tasks', () => {
   beforeAll(async () => {
     // se debería usar una base de datos de testing, separada de la de producción
@@ -17,10 +22,19 @@ describe('Pruebas del servicio de tasks', () => {
     } catch (error) {
       console.error('Error al guardar las tareas previo a los tests');
     }
+
+    // Login
+    const response = await request(server)
+      .post('/api/v1/login')
+      .send(userTesting);
+
+    token = response.body.token;
   });
   /// GET
-  test('Devuelve status 200 para GET /api/tasks', async () => {
-    const response = await request(server).get('/api/v1/tasks');
+  test('Devuelve status 200 para GET /api/v1/tasks', async () => {
+    const response = await request(server)
+      .get('/api/v1/tasks')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
 
     // Verificar si la respuesta contiene la estructura esperada
@@ -29,8 +43,10 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body.length).toBeGreaterThan(0);
   });
 
-  test('Devuelve status 200 para GET /api/tasks usando ordenamiento por name descendente, filtrado por completed true y obtenemos la página 2 con limit 3', async () => {
-    const response = await request(server).get('/api/v1/tasks?completed=true&sortBy=name&sortDirection=desc&page=1&limit=3');
+  test('Devuelve status 200 para GET /api/v1/tasks usando ordenamiento por name descendente, filtrado por completed true y obtenemos la página 2 con limit 3', async () => {
+    const response = await request(server)
+      .get('/api/v1/tasks?completed=true&sortBy=name&sortDirection=desc&page=1&limit=3')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
 
     // Verificar si la respuesta contiene la estructura esperada
@@ -43,8 +59,10 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body[0].completed).toBe(true);
   });
 
-  test('Devuelve status 200 para GET /api/tasks/:id', async () => {
-    const response = await request(server).get(`/api/v1/tasks/${tasksSaved[0]._id}`);
+  test('Devuelve status 200 para GET /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .get(`/api/v1/tasks/${tasksSaved[0]._id}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
 
     // Verificar si la respuesta contiene la estructura esperada
@@ -52,14 +70,18 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body.name).toBeDefined();
   });
 
-  test('Devuelve status 404 para GET /api/tasks/:id', async () => {
-    const response = await request(server).get('/api/v1/tasks/658cda922f06d5e81e545e01');
+  test('Devuelve status 404 para GET /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .get('/api/v1/tasks/658cda922f06d5e81e545e01')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Tarea no encontrada');
+    expect(response.body).toHaveProperty('message', 'Task not found');
   });
 
-  test('Devuelve status 400 (error en id) para GET /api/tasks/:id', async () => {
-    const response = await request(server).get('/api/v1/tasks/1e545e01');
+  test('Devuelve status 400 (error en id) para GET /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .get('/api/v1/tasks/1e545e01')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(400);
 
     // Verificar si la respuesta contiene la estructura de error esperada
@@ -74,14 +96,18 @@ describe('Pruebas del servicio de tasks', () => {
 
   /// DELETE
 
-  test('Devuelve status 404 para DELETE /api/tasks/:id', async () => {
-    const response = await request(server).delete('/api/v1/tasks/658cda822f06d5f81e545e01');
+  test('Devuelve status 404 para DELETE /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .delete('/api/v1/tasks/658cda822f06d5f81e545e01')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Tarea no encontrada para eliminar');
+    expect(response.body).toHaveProperty('message', 'Task not found to delete');
   });
 
-  test('Devuelve status 400 (error en id) para DELETE /api/tasks/:id', async () => {
-    const response = await request(server).delete('/api/v1/tasks/658d018344e9748');
+  test('Devuelve status 400 (error en id) para DELETE /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .delete('/api/v1/tasks/658d018344e9748')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(400);
 
     // Verificar si la respuesta contiene la estructura de error esperada
@@ -94,14 +120,16 @@ describe('Pruebas del servicio de tasks', () => {
     expect(firstError.path).toBe('id');
   });
 
-  test.skip('Devuelve status 204 (No Content) para DELETE /api/tasks/:id', async () => {
-    const response = await request(server).delete(`/api/v1/tasks/${tasksSaved[0]._id}`);
+  test.skip('Devuelve status 204 (No Content) para DELETE /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .delete(`/api/v1/tasks/${tasksSaved[0]._id}`)
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(204);
   }, 10000);
 
   /// PUT
 
-  test('Devuelve status 200 para PUT /api/tasks/:id', async () => {
+  test('Devuelve status 200 para PUT /api/v1/tasks/:id', async () => {
     const updatedData = {
       name: 'Nueva tarea',
       description: 'Descripción actualizada',
@@ -109,7 +137,8 @@ describe('Pruebas del servicio de tasks', () => {
     };
     const response = await request(server)
       .put(`/api/v1/tasks/${tasksSaved[1]._id}`)
-      .send(updatedData);
+      .send(updatedData)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(200);
 
@@ -120,10 +149,10 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body.updated.completed).toBe(updatedData.completed);
 
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toBe('Tarea actualizada correctamente');
+    expect(response.body.message).toBe('Task updated successfully');
   });
 
-  test('Devuelve status 400 (error en id) para PUT /api/tasks/:id', async () => {
+  test('Devuelve status 400 (error en id) para PUT /api/v1/tasks/:id', async () => {
     const updatedData = {
       name: 'Nueva tarea',
       description: 'Descripción actualizada',
@@ -131,7 +160,8 @@ describe('Pruebas del servicio de tasks', () => {
     };
     const response = await request(server)
       .put('/api/v1/tasks/658d018344e9748')
-      .send(updatedData);
+      .send(updatedData)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(400);
 
@@ -145,26 +175,29 @@ describe('Pruebas del servicio de tasks', () => {
     expect(firstError.path).toBe('id');
   });
 
-  test('Devuelve status 400 (error en body) para PUT /api/tasks/:id', async () => {
+  test('Devuelve status 400 (error en body) para PUT /api/v1/tasks/:id', async () => {
     const response = await request(server)
       .put('/api/v1/tasks/658d8d494955e95f81091a5a')
-      .send({});
+      .send({})
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(400);
 
     // Verificar si la respuesta contiene la estructura de error esperada
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toBe('Se requiere al menos de name, description o completed para actualizar la tarea');
+    expect(response.body.message).toBe('At least name, description, or completed is required to update the task');
   });
 
-  test('Devuelve status 404 para PUT /api/tasks/:id', async () => {
-    const response = await request(server).get('/api/v1/tasks/658cda922f06d5e81e545e01');
+  test('Devuelve status 404 para PUT /api/v1/tasks/:id', async () => {
+    const response = await request(server)
+      .get('/api/v1/tasks/658cda922f06d5e81e545e01')
+      .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Tarea no encontrada');
+    expect(response.body).toHaveProperty('message', 'Task not found');
   });
 
   /// POST
 
-  test('Devuelve status 201 para POST /api/tasks', async () => {
+  test('Devuelve status 201 para POST /api/v1/tasks', async () => {
     const newData = {
       name: 'Nueva tarea',
       description: 'Descripción actualizada',
@@ -172,7 +205,8 @@ describe('Pruebas del servicio de tasks', () => {
     };
     const response = await request(server)
       .post('/api/v1/tasks')
-      .send(newData);
+      .send(newData)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(201);
 
@@ -183,17 +217,18 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body.createdTask.completed).toBe(newData.completed);
 
     expect(response.body.message).toBeDefined();
-    expect(response.body.message).toBe('Tarea creada correctamente');
+    expect(response.body.message).toBe('Task created successfully');
   });
 
-  test('Devuelve status 400 (error en body) para POST /api/tasks', async () => {
+  test('Devuelve status 400 (error en body) para POST /api/v1/tasks', async () => {
     const newData = {
       description: 'Descripción actualizada',
       completed: true,
     };
     const response = await request(server)
       .post('/api/v1/tasks')
-      .send(newData);
+      .send(newData)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(400);
 
@@ -205,6 +240,50 @@ describe('Pruebas del servicio de tasks', () => {
     const firstError = response.body.errors[0];
     expect(firstError.type).toBe('field');
     expect(firstError.path).toBe('name');
+  });
+
+  /// REGISTER
+  test('Register devuelve status 400 (username ya existe) /api/v1/register', async () => {
+    const newUser = {
+      username: 'testing',
+      password: 'contrseniaprueba',
+    };
+    const response = await request(server)
+      .post('/api/v1/register')
+      .send(newUser);
+
+    expect(response.statusCode).toBe(400);
+
+    expect(response.body.message).toBeDefined();
+    expect(response.body.message).toBe('Username already in use');
+  });
+
+  /// LOGIN
+  test('Login devuelve status 200 /api/v1/login', async () => {
+    const response = await request(server)
+      .post('/api/v1/login')
+      .send(userTesting);
+
+    expect(response.statusCode).toBe(200);
+
+    expect(response.body.message).toBeDefined();
+    expect(response.body.message).toBe('User successfully logged in');
+    expect(response.body.token).toBeDefined();
+  });
+
+  test('Login devuelve status 401 (credenciales inválidas) /api/v1/login', async () => {
+    const newUser = {
+      username: 'testing',
+      password: 'contrseniaprueba',
+    };
+    const response = await request(server)
+      .post('/api/v1/login')
+      .send(newUser);
+
+    expect(response.statusCode).toBe(401);
+
+    expect(response.body.message).toBeDefined();
+    expect(response.body.message).toBe('Invalid credentials');
   });
 
   afterAll(async () => {

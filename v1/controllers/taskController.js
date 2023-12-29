@@ -43,7 +43,7 @@ const taskController = {
       return res.status(200).json(tasks);
     } catch (error) {
       // Manejo de errores
-      return res.status(500).json({ error: error.message || 'Error al obtener las tareas' });
+      return res.status(500).json({ error: error.message || 'Error retrieving tasks' });
     }
   },
 
@@ -63,10 +63,10 @@ const taskController = {
       const createdTask = await taskService.createTask(taskData);
 
       // Devolver la tarea creada como respuesta
-      return res.status(201).json({ message: 'Tarea creada correctamente', createdTask });
+      return res.status(201).json({ message: 'Task created successfully', createdTask });
     } catch (error) {
       // Manejo de errores
-      return res.status(500).json({ error: error.message || 'Error al crear una nueva tarea' });
+      return res.status(500).json({ error: error.message || 'Error creating a new task' });
     }
   },
 
@@ -85,14 +85,14 @@ const taskController = {
       // Llama al servicio para obtener la tarea por ID
       const task = await taskService.getTaskById(id);
       if (!task) {
-        return res.status(404).json({ message: 'Tarea no encontrada' });
+        return res.status(404).json({ message: 'Task not found' });
       }
 
       // Devolver la tarea como respuesta
       return res.status(200).json(task);
     } catch (error) {
       // Manejo de errores
-      return res.status(500).json({ error: error.message || 'Error al obtener la tarea por ID' });
+      return res.status(500).json({ error: error.message || 'Error getting the task by ID' });
     }
   },
 
@@ -110,7 +110,7 @@ const taskController = {
     // Verificar que al menos uno de los campos (name, description, completed)
     //    esté presente en la solicitud
     if (!name && !description && completed === undefined) {
-      return res.status(400).json({ message: 'Se requiere al menos de name, description o completed para actualizar la tarea' });
+      return res.status(400).json({ message: 'At least name, description, or completed is required to update the task' });
     }
 
     const updatedTask = {};
@@ -122,14 +122,14 @@ const taskController = {
       const updated = await taskService.updateTaskById(id, updatedTask);
 
       if (!updated) {
-        return res.status(404).json({ message: 'Tarea no encontrada para actualizar' });
+        return res.status(404).json({ message: 'Task not found to update' });
       }
 
       // Devolver la tarea actualizada como respuesta
-      return res.status(200).json({ message: 'Tarea actualizada correctamente', updated });
+      return res.status(200).json({ message: 'Task updated successfully', updated });
     } catch (error) {
       // Manejo de errores
-      return res.status(500).json({ error: error.message || 'Error al actualizar la tarea por ID' });
+      return res.status(500).json({ error: error.message || 'Error updating the task by ID' });
     }
   },
 
@@ -146,13 +146,13 @@ const taskController = {
       const deletedTask = await taskService.deleteTaskById(id);
 
       if (!deletedTask) {
-        return res.status(404).json({ message: 'Tarea no encontrada para eliminar' });
+        return res.status(404).json({ message: 'Task not found to delete' });
       }
 
       // Devolver la tarea eliminada como respuesta
       return res.status(204).end();
     } catch (error) {
-      return res.status(500).json({ error: error.message || 'Error al eliminar la tarea por ID' });
+      return res.status(500).json({ error: error.message || 'Error deleting the task by ID' });
     }
   },
 };

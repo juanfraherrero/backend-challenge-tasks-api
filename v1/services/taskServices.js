@@ -14,7 +14,7 @@ const taskService = {
       }
       return tasks;
     } catch (error) {
-      throw new Error('Error al obtener las tareas:', error);
+      throw new Error('Error retriving tasks:', error);
     }
   },
 
@@ -27,7 +27,7 @@ const taskService = {
       const createdTask = await newTask.save();
       return createdTask; // Devuelve la tarea creada
     } catch (error) {
-      throw new Error('Error al crear una nueva tarea:', error);
+      throw new Error('Error creating new task:', error);
     }
   },
 
@@ -37,7 +37,7 @@ const taskService = {
       const tasks = await Task.findById(id);
       return tasks;
     } catch (error) {
-      throw new Error('Error al obtener la tarea:', error);
+      throw new Error('Error retriving task:', error);
     }
   },
 
@@ -47,7 +47,7 @@ const taskService = {
       const updated = await Task.findByIdAndUpdate(id, updatedTask, { new: true });
       return updated; // Devuelve la tarea actualizada
     } catch (error) {
-      throw new Error('Error al actualizar la tarea por ID:', error);
+      throw new Error('Error updating task by ID:', error);
     }
   },
 
@@ -57,7 +57,7 @@ const taskService = {
       const deletedTask = await Task.findByIdAndDelete(id);
       return deletedTask; // Devuelve la tarea eliminada
     } catch (error) {
-      throw new Error('Error al eliminar la tarea por ID:', error);
+      throw new Error('Error deleting task by ID:', error);
     }
   },
 };

@@ -21,9 +21,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Rutas
-const v1Routes = require('./v1/routes/tasksRoutes');
+const v1RoutesTasks = require('./v1/routes/tasksRoutes');
+const v1RoutesUsers = require('./v1/routes/usersRoutes');
 
-app.use('/api/v1', v1Routes);
+app.use('/api/v1', v1RoutesUsers);
+app.use('/api/v1', v1RoutesTasks);
 app.use('/api/v1/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerOptionsv1));
 
 // 404 sino coincide con ninguna ruta
