@@ -35,6 +35,7 @@ app.use((req, res) => {
 
 // Iniciar el servidor
 const server = app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}`);
 });
 

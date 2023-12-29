@@ -20,6 +20,7 @@ describe('Pruebas del servicio de tasks', () => {
       await Task.deleteMany(); // Eliminar todos los documentos de la colección
       tasksSaved = await Task.insertMany(tasks); // Guardar los datos en la colección
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error al guardar las tareas previo a los tests');
     }
 
