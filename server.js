@@ -33,7 +33,7 @@ app.use((req, res) => {
 
 // Iniciar el servidor
 const server = app.listen(PORT, () => {
-  console.log(`Servidor iniciado en el puerto ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = server;

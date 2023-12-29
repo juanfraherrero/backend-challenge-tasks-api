@@ -5,8 +5,39 @@ const taskController = {
 
   // Controlador para obtener todas las tareas
   async getAllTasks(req, res) {
+    const errors = validationResult(req);
+
+    // Validación de errores
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      page = 1, limit = 10, sortBy, sortDirection, completed,
+    } = req.query;
+
+    const sortQuery = {};
+
+    if (sortBy && sortDirection) {
+      sortQuery[sortBy] = sortDirection === 'desc' ? -1 : 1;
+    } else if (sortBy || sortDirection) {
+      // si cualquier de estos es proporcionado, pero no ambos entonces informamos el error
+      return res.status(400).json({
+        errors: [
+          {
+            type: 'fields',
+            value: '81e545e00',
+            msg: 'Se requiere de sortBy y sortDirection para ordenar las tareas',
+            path: 'sortby, sortDirection',
+            location: 'params',
+          },
+        ],
+      });
+    }
+
     try {
-      const tasks = await taskService.getAllTasks(); // Llama al servicio para obtener las tareas
+      // Llama al servicio para obtener las tareas
+      const tasks = await taskService.getAllTasks(page, limit, sortQuery, completed);
 
       // Devolver las tareas como respuesta
       return res.status(200).json(tasks);

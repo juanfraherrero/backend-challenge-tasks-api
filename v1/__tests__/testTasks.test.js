@@ -29,6 +29,20 @@ describe('Pruebas del servicio de tasks', () => {
     expect(response.body.length).toBeGreaterThan(0);
   });
 
+  test('Devuelve status 200 para GET /api/tasks usando ordenamiento por name descendente, filtrado por completed true y obtenemos la página 2 con limit 3', async () => {
+    const response = await request(server).get('/api/v1/tasks?completed=true&sortBy=name&sortDirection=desc&page=1&limit=3');
+    expect(response.statusCode).toBe(200);
+
+    // Verificar si la respuesta contiene la estructura esperada
+    expect(response.body).toBeDefined();
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body.length).toBe(3);
+
+    expect(response.body[0].name).toBe('Terminar proyecto');
+    expect(response.body[0].completed).toBe(true);
+  });
+
   test('Devuelve status 200 para GET /api/tasks/:id', async () => {
     const response = await request(server).get(`/api/v1/tasks/${tasksSaved[0]._id}`);
     expect(response.statusCode).toBe(200);

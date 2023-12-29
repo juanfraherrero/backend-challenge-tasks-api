@@ -3,9 +3,15 @@ const Task = require('../models/Task');
 const taskService = {
 
   // Controlador para obtener todas las tareas
-  async getAllTasks() {
+  async getAllTasks(page, limit, sortQuery, completed) {
+    const skip = (page - 1) * limit;
     try {
-      const tasks = await Task.find();
+      let tasks;
+      if (completed !== undefined) {
+        tasks = await Task.find({ completed }).sort(sortQuery).skip(skip).limit(limit);
+      } else {
+        tasks = await Task.find().sort(sortQuery).skip(skip).limit(limit);
+      }
       return tasks;
     } catch (error) {
       throw new Error('Error al obtener las tareas:', error);

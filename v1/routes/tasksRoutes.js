@@ -2,22 +2,63 @@ const express = require('express');
 
 const router = express.Router();
 const taskController = require('../controllers/taskController');
-const { idValidation, nameDescriptionCompletedValidationForPOST, nameDescriptionCompletedValidationForPUT } = require('../validations/validations');
+// importamos las validaciones
+const {
+  idValidation,
+  nameDescriptionCompletedValidationForPOST,
+  nameDescriptionCompletedValidationForPUT,
+  validatePaginationSortingCompletedParams,
+} = require('../validations/validations');
+
 /**
  * @swagger
  * /api/v1/tasks:
  *   get:
  *     summary: Get all tasks
  *     description: Endpoint to fetch all tasks.
+ *       You can filter, paginate, and sort tasks using query parameters.
+ *       sortBy and sortDirection must be used together or not used at all.
  *     tags:
- *      - API v1
+ *       - API v1
+ *     parameters:
+ *       - name: completed
+ *         in: query
+ *         description: Filter tasks by completion status.
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination.
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page.
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: sortBy
+ *         in: query
+ *         description: Field to sort by (name, completed, description).
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: sortDirection
+ *         in: query
+ *         description: Sort direction (asc or desc).
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
  *     responses:
  *       200:
  *         description: Returns all tasks.
  *       500:
  *         description: Error while fetching tasks.
  */
-router.get('/tasks', taskController.getAllTasks);
+router.get('/tasks', validatePaginationSortingCompletedParams, taskController.getAllTasks);
 
 /**
  * @openapi

@@ -1,4 +1,4 @@
-const { param, body } = require('express-validator');
+const { param, body, query } = require('express-validator');
 
 // Validaciones para el parámetro 'id'
 const idValidation = [
@@ -26,8 +26,17 @@ const nameDescriptionCompletedValidationForPOST = [
     .escape(),
 ];
 
+const validatePaginationSortingCompletedParams = [
+  query('page').optional().isInt({ min: 1 }).withMessage('Page debe ser un número entero positivo'),
+  query('limit').optional().isInt({ min: 1 }).withMessage('Limit debe ser un número entero positivo'),
+  query('sortBy').optional().isIn(['name', 'completed', 'description']).withMessage('sortBy debe ser "name" o "completed" o "description"'),
+  query('sortDirection').optional().isIn(['asc', 'desc']).withMessage('sortDirection debe ser "asc" o "desc"'),
+  query('completed').optional().isBoolean().withMessage('El parámetro "completed" debe ser un booleano'),
+];
+
 module.exports = {
   idValidation,
   nameDescriptionCompletedValidationForPUT,
   nameDescriptionCompletedValidationForPOST,
+  validatePaginationSortingCompletedParams,
 };
